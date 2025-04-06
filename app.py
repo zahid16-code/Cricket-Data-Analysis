@@ -68,29 +68,27 @@ if user_menu == "Batting Statistics":
     col1, col2, col3 = st.columns(3)
     with col1:
         st.subheader("Most Runs")
-        st.write(top_runs['Player']) if top_runs is not None else st.write("Not Available")
-        st.write(f"Runs: {top_runs['Runs']}") if top_runs is not None else None
-
+        st.write(top_runs['Player']) 
+        st.write(f"Runs: {top_runs['Runs']}") 
     with col2:
         st.subheader("Best Batting Average")
-        st.write(top_avg['Player']) if top_avg is not None else st.write("Not Available")
-        st.write(f"Avg: {top_avg['Average']:.2f}") if top_avg is not None else None
+        st.write(top_avg['Player']) 
+        st.write(f"Avg: {top_avg['Average']:.2f}") 
 
     with col3:
         st.subheader("Highest Strike Rate")
-        st.write(top_sr['Player']) if top_sr is not None else st.write("Not Available")
-        st.write(f"SR: {top_sr['Strike Rate']:.2f}") if top_sr is not None else None
-
+        st.write(top_sr['Player']) 
+        st.write(f"SR: {top_sr['Strike Rate']:.2f}") 
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Most Centuries")
-        st.write(top_100s['Player']) if top_100s is not None else st.write("Not Available")
-        st.write(f"100s: {top_100s['Centuries']}") if top_100s is not None else None
+        st.write(top_100s['Player']) 
+        st.write(f"100s: {top_100s['Centuries']}") 
 
     with col2:
         st.subheader("Most Half-Centuries")
-        st.write(top_50s['Player']) if top_50s is not None else st.write("Not Available")
-        st.write(f"50s: {top_50s['Half-Centuries']}") if top_50s is not None else None
+        st.write(top_50s['Player'])
+        st.write(f"50s: {top_50s['Half-Centuries']}") 
 
     # Bar chart for top 10 players by runs
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -186,3 +184,82 @@ else:
         else:
             st.header("Most runs conceded")
             st.subheader(f"{main['Player']} - Maidens: {main['Runs']}")
+    
+    m_wickets=df.iloc[df["Wickets"].idxmax()]
+    avg1=df[df["Matches"]>100]
+    avg=avg1.loc[avg1["Average"].idxmax()]
+    h_matches=df.iloc[df["Matches"].idxmax()]
+    eco1=df[df["Matches"]>100]
+    eco=eco1.loc[eco1["Economy"].idxmax()]
+    sr=df.loc[df["Strike-Rate"].idxmin()]
+    
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.title("Top Performers")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.subheader("Most Wickets")
+        st.write(m_wickets['Player'])
+        st.write(f"Runs: {m_wickets['Wickets']}")
+
+    with col2:
+        st.subheader("Best Bowling Average")
+        st.write(avg['Player'])
+        st.write(f"Avg: {avg['Average']:.2f}")
+
+    with col3:
+        st.subheader("Better  Strike Rate")
+        st.write(sr['Player']) 
+        st.write(f"SR: {sr['Strike-Rate']}") 
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Best Economy")
+        st.write(eco['Player']) 
+        st.write(f"Economy: {eco['Economy']}") 
+
+    with col2:
+        st.subheader("Most Matches Played")
+        st.write(h_matches['Player']) 
+        st.write(f"Matches: {h_matches['Matches']}")
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.title("Highest Wicket Taker")
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.header("Top 10 Players by Wickets")
+    top_players = df.sort_values("Wickets", ascending=False).head(10)
+    fig = px.bar(top_players,
+                 x="Wickets",
+                 y="Player",
+                 title="Top 10 Players by Wickets taken",
+                 color="Wickets",
+                 orientation='h',
+                 category_orders={"Player": top_players["Player"].tolist()})
+    fig.update_layout(height=300, margin=dict(l=100, r=50, t=50, b=50), font=dict(size=14))
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.header("Most successful players")
+    players1, countries1 = preprocess.converter(df)
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_player = st.selectbox("Select Player", players1)
+    with col2:
+        selected_country = st.selectbox("Select Country", countries1)
+
+    players_df = preprocess.table_return(df, selected_player, selected_country)
+
+    if selected_player == 'Overall' and selected_country == 'Overall':
+        st.title("All Players stat")
+    elif selected_player != 'Overall' and selected_country == 'Overall':
+        st.title(f"Statistics of {selected_player} in Cricket")
+    elif selected_player == 'Overall' and selected_country != 'Overall':
+        st.title(f"Players of {selected_country}")
+    else:
+        st.title(f"Statistics of {selected_player}")
+
+    styled_df = players_df.style.set_table_styles(
+        [
+            {'selector': 'thead th', 'props': [('background-color', 'black'), ('color', 'white')]},
+            {'selector': 'tbody td', 'props': [('background-color', '#333'), ('color', 'white')]}
+        ]
+    )
+    st.table(styled_df)    
