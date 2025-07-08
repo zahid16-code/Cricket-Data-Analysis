@@ -1,7 +1,5 @@
 pandas
 numpy
 streamlit
-importlib
-jupyter notebook
 matplotlib
 plotly
