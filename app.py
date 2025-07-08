@@ -58,7 +58,7 @@ if user_menu == "Batting Statistics":
     # Top stats
     top_runs = df.loc[df["Runs"].idxmax(), ["Player", "Runs"]] if "Runs" in df.columns else None
     top_avg = df[df["Innings"] >= 20].nlargest(1, "Average")[["Player", "Average"]].iloc[0] if "Average" in df.columns else None
-    top_sr = df[df["Balls Faced"] >= 500].nlargest(1, "Strike Rate")[["Player", "Strike Rate"]].iloc[0] if "Strike Rate" in df.columns and "Balls Faced" in df.columns else None
+    top_sr = df.loc[df["Not-Outs"].idxmax(),["Player","Not-Outs"]] if "Not-Outs" in df.columns else None 
     top_100s = df.loc[df["Centuries"].idxmax(), ["Player", "Centuries"]] if "Centuries" in df.columns else None
     top_50s = df.loc[df["Half-Centuries"].idxmax(), ["Player", "Half-Centuries"]] if "Half-Centuries" in df.columns else None
 
@@ -76,9 +76,9 @@ if user_menu == "Batting Statistics":
         st.write(f"Avg: {top_avg['Average']:.2f}") 
 
     with col3:
-        st.subheader("Highest Strike Rate")
-        st.write(top_sr['Player']) 
-        st.write(f"SR: {top_sr['Strike Rate']:.2f}") 
+        st.subheader("Most Not-Outs")
+        st.write(top_sr['Player'])
+        st.write(f"SR: {top_sr['Not-Outs']}") 
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Most Centuries")
@@ -238,7 +238,7 @@ else:
     st.plotly_chart(fig, use_container_width=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.header("Most successful players")
-    players1, countries1 = preprocess.converter(df)
+    players1, countries1 = preprocess.converter(df) 
     col1, col2 = st.columns(2)
     with col1:
         selected_player = st.selectbox("Select Player", players1)
