@@ -10,7 +10,7 @@ importlib.reload(preprocess)
 
 # Sidebar
 st.sidebar.title("Cricket Data Analysis")
-st.sidebar.image(r"C:\Users\ZIYAD\Downloads\Cricket-Data-Analysis\cricket_image.jpg")
+st.sidebar.image("cricket_image.jpg")
 
 user_menu = st.sidebar.selectbox("Select User Type", ("Batting Statistics", "Bowling Statistics"))
 
